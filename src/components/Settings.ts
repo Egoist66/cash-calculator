@@ -1,4 +1,5 @@
 import type { Theme } from '../store/theme.store'
+import { CustomDenomination } from './CustomDenomination'
 
 const sunIcon = `
   <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="h-4 w-4">
@@ -122,7 +123,7 @@ export function SettingsModal(theme: Theme): string {
           </button>
         </header>
 
-        <div class="overflow-y-auto px-5 py-5">
+        <div class="space-y-5 overflow-y-auto px-5 py-5">
           <section aria-labelledby="settings-theme-title">
             <h3
               id="settings-theme-title"
@@ -136,6 +137,25 @@ export function SettingsModal(theme: Theme): string {
 
             <div data-settings-theme class="mt-3">
               ${ThemeSettings(theme)}
+            </div>
+          </section>
+
+          <section
+            aria-labelledby="settings-custom-title"
+            class="border-t border-slate-200/70 pt-5 dark:border-white/10"
+          >
+            <h3
+              id="settings-custom-title"
+              class="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500"
+            >
+              Свой номинал
+            </h3>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              Добавьте нестандартный номинал в список.
+            </p>
+
+            <div class="mt-3">
+              ${CustomDenomination()}
             </div>
           </section>
         </div>

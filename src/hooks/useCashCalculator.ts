@@ -5,6 +5,7 @@ import {
   addDenomination,
   cashStore,
   clearCash,
+  removeDenomination,
   setCount,
   setCurrency,
 } from '../store/cash.store'
@@ -131,7 +132,9 @@ export const useCashCalculator = () => {
     }
 
     const writeVoiceUi = (): void => {
-      const button = form.querySelector<HTMLButtonElement>('[data-voice-toggle]')
+      const button = form.querySelector<HTMLButtonElement>(
+        '[data-voice-toggle]',
+      )
       const label = form.querySelector<HTMLElement>('[data-voice-label]')
       const status = form.querySelector<HTMLElement>('[data-voice-status]')
       const transcript =
@@ -240,7 +243,7 @@ export const useCashCalculator = () => {
       voiceLocal = useLocal
       voiceStatusText = useLocal
         ? 'Слушаю на устройстве…'
-        : 'Скажите: «Номинал сто, количество три».'
+        : 'Скажите например: «Номинал сто, количество три».'
       writeVoiceUi()
 
       try {
@@ -365,7 +368,7 @@ export const useCashCalculator = () => {
           if (recognition) {
             recognition.processLocally = false
             voiceSettled = false
-            voiceStatusText = 'Скажите: «Номинал сто, количество три».'
+            voiceStatusText = 'Скажите например: «Номинал сто, количество три».'
             writeVoiceUi()
 
             try {
@@ -475,13 +478,47 @@ export const useCashCalculator = () => {
         return
       }
 
+      if (target.closest('[data-add-denomination]')) {
+        addCustomDenomination()
+        return
+      }
+
       if (target.closest('[data-settings-close]')) {
         closeSettings()
       }
     }
 
+    const onSettingsInput = (event: Event): void => {
+      const input = event.target
+
+      if (
+        input instanceof HTMLInputElement &&
+        input.matches('[data-custom-denomination]')
+      ) {
+        const error = settingsDialog?.querySelector<HTMLElement>(
+          '[data-custom-error]',
+        )
+
+        if (error) {
+          error.textContent = ''
+        }
+      }
+    }
+
     const onDocumentKeydown = (event: KeyboardEvent): void => {
       if (!settingsOpen || !settingsDialog) {
+        return
+      }
+
+      const target = event.target
+
+      if (
+        event.key === 'Enter' &&
+        target instanceof HTMLInputElement &&
+        target.matches('[data-custom-denomination]')
+      ) {
+        event.preventDefault()
+        addCustomDenomination()
         return
       }
 
@@ -556,10 +593,11 @@ export const useCashCalculator = () => {
     }
 
     const addCustomDenomination = (): void => {
-      const input = form.querySelector<HTMLInputElement>(
+      const scope = settingsDialog ?? form
+      const input = scope.querySelector<HTMLInputElement>(
         '[data-custom-denomination]',
       )
-      const error = form.querySelector<HTMLElement>('[data-custom-error]')
+      const error = scope.querySelector<HTMLElement>('[data-custom-error]')
       const result = addDenomination(Number(input?.value ?? ''))
 
       if (result === 'invalid') {
@@ -595,6 +633,21 @@ export const useCashCalculator = () => {
         return
       }
 
+      const removeButton = target.closest<HTMLButtonElement>(
+        '[data-remove-denomination]',
+      )
+
+      if (removeButton?.dataset.removeDenomination) {
+        if (
+          removeDenomination(
+            Number(removeButton.dataset.removeDenomination),
+          )
+        ) {
+          showStatus('Номинал удалён')
+        }
+        return
+      }
+
       if (target.closest('[data-voice-toggle]')) {
         toggleVoice()
         return
@@ -604,11 +657,6 @@ export const useCashCalculator = () => {
 
       if (currencyButton?.dataset.currency) {
         setCurrency(currencyButton.dataset.currency as CurrencyCode)
-        return
-      }
-
-      if (target.closest('[data-add-denomination]')) {
-        addCustomDenomination()
         return
       }
 
@@ -632,14 +680,6 @@ export const useCashCalculator = () => {
       const input = event.target
 
       if (!(input instanceof HTMLInputElement)) {
-        return
-      }
-
-      if (input.matches('[data-custom-denomination]')) {
-        const error = form.querySelector<HTMLElement>('[data-custom-error]')
-        if (error) {
-          error.textContent = ''
-        }
         return
       }
 
@@ -672,24 +712,11 @@ export const useCashCalculator = () => {
       input.value = String(item?.count ?? 0)
     }
 
-    const onKeydown = (event: KeyboardEvent): void => {
-      const input = event.target
-
-      if (
-        event.key === 'Enter' &&
-        input instanceof HTMLInputElement &&
-        input.matches('[data-custom-denomination]')
-      ) {
-        event.preventDefault()
-        addCustomDenomination()
-      }
-    }
-
     form.addEventListener('click', onClick)
     form.addEventListener('input', onInput)
     form.addEventListener('focusout', onFocusOut)
-    form.addEventListener('keydown', onKeydown)
     settingsDialog?.addEventListener('click', onSettingsClick)
+    settingsDialog?.addEventListener('input', onSettingsInput)
     document.addEventListener('keydown', onDocumentKeydown)
 
     const unsubscribeNominals = cashStore.subscribe('nominals', schedule)
@@ -719,8 +746,8 @@ export const useCashCalculator = () => {
       form.removeEventListener('click', onClick)
       form.removeEventListener('input', onInput)
       form.removeEventListener('focusout', onFocusOut)
-      form.removeEventListener('keydown', onKeydown)
       settingsDialog?.removeEventListener('click', onSettingsClick)
+      settingsDialog?.removeEventListener('input', onSettingsInput)
       document.removeEventListener('keydown', onDocumentKeydown)
       unsubscribeNominals()
       unsubscribeCurrency()

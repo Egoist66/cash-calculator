@@ -15,4 +15,24 @@
 body {
   min-height: 100svh;
   background-color: inherit;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+#app {
+  min-height: 100svh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (display-mode: standalone) {
+  body {
+    overscroll-behavior: none;
+  }
 }

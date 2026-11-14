@@ -4,6 +4,11 @@ export type Theme = 'light' | 'dark'
 
 const STORAGE_KEY = 'cash-calculator:theme'
 
+const THEME_COLORS: Record<Theme, string> = {
+  light: '#f8fafc',
+  dark: '#020617',
+}
+
 function prefersDark(): boolean {
   return (
     typeof window !== 'undefined' &&
@@ -35,6 +40,14 @@ function applyTheme(theme: Theme): void {
   const root = document.documentElement
   root.classList.toggle('dark', theme === 'dark')
   root.style.colorScheme = theme
+
+  const themeColor = document.querySelector<HTMLMetaElement>(
+    'meta[name="theme-color"]',
+  )
+
+  if (themeColor) {
+    themeColor.content = THEME_COLORS[theme]
+  }
 }
 
 export const themeStore = reactive({ theme: loadTheme() })

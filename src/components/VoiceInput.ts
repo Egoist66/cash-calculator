@@ -14,7 +14,7 @@ export function VoiceInput(): string {
             Голосовой ввод
           </p>
           <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Скажите: «Номинал сто, количество три».
+            Скажите например: «Номинал сто, количество три».
           </p>
           <p class="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
             Первый запуск может скачать языковой пакет.

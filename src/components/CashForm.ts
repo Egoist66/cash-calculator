@@ -3,7 +3,7 @@ import { totalCash } from '../store/cash.type'
 import { themeStore } from '../store/theme.store'
 import { CashList } from './CashList'
 import { CurrencySwitcher } from './CurrencySwitcher'
-import { CustomDenomination } from './CustomDenomination'
+import { InstallButton } from './InstallButton'
 import { SettingsButton, SettingsModal } from './Settings'
 import { TotalBlock } from './TotalBlock'
 import { VoiceInput } from './VoiceInput'
@@ -34,6 +34,7 @@ export function CashFormContent(store: CashStorType): string {
         </div>
 
         <div class="flex w-full items-stretch gap-2 sm:w-auto sm:items-center">
+          ${InstallButton()}
           ${CurrencySwitcher(store.currency)}
           ${SettingsButton()}
         </div>
@@ -42,7 +43,6 @@ export function CashFormContent(store: CashStorType): string {
       <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start">
         <div class="order-2 flex min-w-0 flex-col gap-4 lg:order-1">
           ${CashList(store.nominals, store.currency)}
-          ${CustomDenomination()}
           ${VoiceInput()}
         </div>
 

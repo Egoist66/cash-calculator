@@ -2,6 +2,7 @@ import { reactive } from '../../core/reactive'
 import {
   CURRENCIES,
   DEFAULT_CURRENCY,
+  isDefaultDenomination,
   type CashItem,
   type CurrencyCode,
 } from './cash.type'
@@ -172,6 +173,23 @@ export function clearCash(): void {
     denomination: item.denomination,
     count: 0,
   }))
+}
+
+export function removeDenomination(denomination: number): boolean {
+  if (isDefaultDenomination(denomination, cashStore.currency)) {
+    return false
+  }
+
+  const next = cashStore.nominals.filter(
+    (item) => item.denomination !== denomination,
+  )
+
+  if (next.length === cashStore.nominals.length) {
+    return false
+  }
+
+  cashStore.nominals = next
+  return true
 }
 
 export type AddDenominationResult = 'added' | 'invalid' | 'duplicate'

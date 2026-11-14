@@ -1,10 +1,10 @@
 export function CustomDenomination(): string {
   return `
-    <div class="rounded-2xl border border-dashed border-slate-300/80 bg-white/50 p-4 dark:border-white/15 dark:bg-white/5">
+    <div>
       <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
         <label class="flex-1">
           <span class="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">
-            Свой номинал
+            Номинал
           </span>
           <input
             type="number"

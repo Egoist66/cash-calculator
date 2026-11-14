@@ -16,7 +16,22 @@ export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
     shortLabel: '₽ RUB',
     symbol: '₽',
     locale: 'ru-RU',
-    denominations: [5, 10, 50, 100, 200, 500, 1000, 2000, 5000],
+    denominations: [
+      0.05,
+      0.1,
+      0.5,
+      1,
+      2,
+      5,
+      10,
+      50,
+      100,
+      200,
+      500,
+      1000,
+      2000,
+      5000,
+    ],
   },
   BYN: {
     code: 'BYN',
@@ -32,6 +47,7 @@ export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
       0.2,
       0.5,
       1,
+      2,
       5,
       10,
       20,
@@ -58,6 +74,13 @@ export const DEFAULT_CURRENCY: CurrencyCode = 'RUB'
 export interface CashItem {
   denomination: number
   count: number
+}
+
+export function isDefaultDenomination(
+  denomination: number,
+  currency: CurrencyCode,
+): boolean {
+  return CURRENCIES[currency].denominations.includes(denomination)
 }
 
 const moneyFormatters: Record<CurrencyCode, Intl.NumberFormat> = {
